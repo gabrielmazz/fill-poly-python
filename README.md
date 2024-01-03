@@ -11,6 +11,8 @@
 
 - [Descrição do Projeto](#descrição-do-projeto)
 - [Pré-requisitos](#pré-requisitos)
+    - [Requisitos para o projeto](#requisitos-para-o-projeto)
+    - [Requisitos mínimos de hardware](#requisitos-mínimos-de-hardware)
 - [Como usar](#como-usar)
     - [Fill Poly](#fill-poly)
         - [Explicando um pouco de como foi implementado](#explicando-um-pouco-de-como-foi-implementado)
@@ -31,6 +33,8 @@
 
 ## Pré-requisitos
 
+### Requisitos para o projeto
+
 Antes de começar, você vai precisar ter instalado em sua máquina as seguintes ferramentas:
 
 - [Python](https://www.python.org/downloads/), versão 3.8.5 ou superior
@@ -47,6 +51,13 @@ Antes de começar, você vai precisar ter instalado em sua máquina as seguintes
 - [Rich](), versão 9.2.0 ou superior
     - `pip install rich`
     - Usado no código para criação de tabelas e logs mais organizados sobre a demonstração do log do algoritmo
+
+### Requisitos mínimos de hardware
+
+- Sistema operacional: Linux (Ubuntu 20.04.2 LTS)
+- Processador: dual-core 1.6GHz ou superior
+- Memória RAM: 2GB ou superior
+- Espaço em disco: 1GB ou superior
 
 ## Como usar
 
