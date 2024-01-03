@@ -1,7 +1,9 @@
 # Algoritmo de Fill Poly
 
 > Projeto: *Fill Poly (Scanline)*
+
 > Mátéria: Computação Gráfica
+
 > Desenvolvido por: [Gabriel Mazzuco](https://github.com/gabrielmazz)
 
 
