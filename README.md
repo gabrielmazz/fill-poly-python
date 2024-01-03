@@ -1,11 +1,8 @@
-# Algoritmo de Fill Poly
+# <p align="center">Algoritmo de Fill Poly</p>
+#### <p align="center">Trabalho de Computação Gráfica, faculdade de Ciência da Computação, UNIOESTE (Universidade Estadual do Oeste do Paraná)</p>
+##### <p align="center">Desenvolvido por: [Gabriel Mazzuco](https://github.com/gabrielmazz)
 
-> Projeto: *Fill Poly (Scanline)*
-
-> Mátéria: Computação Gráfica
-
-> Desenvolvido por: [Gabriel Mazzuco](https://github.com/gabrielmazz)
-
+---
 
 ## Indice
 
