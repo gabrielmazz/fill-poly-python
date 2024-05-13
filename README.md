@@ -12,7 +12,6 @@
     - [Requisitos mínimos de hardware](#requisitos-mínimos-de-hardware)
 - [Como usar](#como-usar)
     - [Fill Poly](#fill-poly)
-        - [Explicando um pouco de como foi implementado](#explicando-um-pouco-de-como-foi-implementado)
     - [Carregando dados de um arquivo](#carregando-dados-de-um-arquivo)
         - [Formato do arquivo](#formato-do-arquivo)
 - [Referências](#referências)
@@ -23,10 +22,7 @@
 
 <p align="justify"> O código usa como base um poligono definido pelo usuário, esse poligono usa seus vértices para definir aonde começa e termina o preenchimento. Definido pelo usuário também as cores que serão usadas para o preenchimento, assim realizando uma interpolação, causando o efeito degradê. </p>
 
-<p align="center">
-    <img src="img/img_triangulo_teste.png" width="" height=""
-    style="box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);">
-</p>
+<p align="center"> <img src="img/img_triangulo_teste.png" width="800" height="400" style="border-radius: 12px; box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);"> </p>
 
 ## Pré-requisitos
 
@@ -117,50 +113,6 @@ python3 main.py
     style="box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);">
 
 <p align="justify"> Interessante ressaltar que o algoritmo é bem lerdo e não é possivel atualizar a tela a todo momento, por exemplo quando editamos os vértices de um polígono, ele não atualiza o fill poly iterativamente, portanto devemos clicar no menu <em>Refresh</em> e clicar em <em>Refresh Fill Poly    </em> para atualizar os poligonos que estão preenchidos mas agora nas suas novas posições.</p>
-
-#### Explicando um pouco de como foi implementado
-
-<p align="justify"> O algoritmo de Fill Poly é baseado no algoritmo de Scanline, que consiste em preencher uma linha horizontal, a partir de um ponto inicial, até um ponto final. O algoritmo de Scanline é usado para preencher um polígono, a partir de um ponto inicial, até um ponto final, e assim preenchendo o polígono. </p>
-
-<p align="justify"> O código da implementação foi feito em um arquivo separado chamado `fill_poly.py`, onde contém a função `fill_poly`, que recebe como parâmetro os vérices do polígono</p>
-
-<p align="justify"> Primeiramente ele determina qual é o menor e o maior valor de y dos vértices do polígono, para saber aonde começa e termina o preenchimento. </p>
-
-```python
-min_y = min(vertices, key=lambda p: p[0][1])[0][1]
-max_y = max(vertices, key=lambda p: p[0][1])[0][1]
-```
-
-<p align="justify"> Posteriormente ele percorre cada linha e verificando as interseções entre essa linha e as arestas do triângulo. Criando uma lista com todas as interseções, e depois ordenando essa lista de acordo com o valor de x de cada interseção. </p>
-
-<p align="justify"> Nas suas verificações ele adiciona uma tolerância de 0.000001 para que não ocorra erros de arredondamento, e assim não ocorra erros no algoritmo. </p>
-
-```python
-if y1 <= y + 1e-6 <= y2 or y2 <= y + 1e-6 <= y1:
-    if y2 - y1 != 0:
-        x = int(x1 + (y + 1e-6 - y1) * (x2 - x1) / (y2 - y1))
-        intersections.append(x)
-```
-
-<p align="justify"> Depois de tudo, ele parte para o preenchimento aonde ele cria linha por linha, e preenche cada linha com a cor correspondente da interseção, calculando os pesos de interpolação para cada vértice de um triângulo, que são usados para criar um efeito de gradiente ao preencher o triângulo. </p>
-
-<p align="justify"> Inicializa uma lista d para armazenar as distâncias entre cada vértice do triângulo e um ponto de referência (x, y). Calcula a distância euclidiana entre cada vértice e o ponto de referência e armazena essas distâncias em d </p>
-
-```python
-d = [((vx - x) ** 2 + (vy - y) ** 2) ** 0.5 for ((vx, vy), _) in vertices]
-```
-
-<p align="justify"> Calcula a soma dos inversos dos quadrados de cada distância em d para obter o valor total. Isso evita a divisão por zero adicionando um pequeno valor ao denominador.
-
-```python	
-total = sum(1 / ((di + 1e-6) ** 2) for di in d)
-```
-
-<p align="justify"> Calcula os pesos de interpolação para cada distância em d dividindo o inverso do quadrado da distância pelo valor total. Isso garante que as cores dos vértices sejam interpoladas de acordo com a distância ao ponto de referência, criando um efeito de gradiente. A cor será mais forte perto dos vértices, onde o peso de interpolação é maior, e ficará mais fraca à medida que se afasta dos vértices. </p>
-
-```python
-t = [(1 / ((di + 1e-6) ** 2)) / total for di in d]
-```
 
 ### Carregando dados de um arquivo
 
