@@ -1,112 +1,117 @@
 import tkinter as tk
+import time
 
 def fill_poly(vertices, canvas):
     
-    def interpolate_color(color1, color2, color3, t1, t2, t3):
-        # Interpola as componentes RGB
-        r = int(t1 * color1[0] + t2 * color2[0] + t3 * color3[0])
-        g = int(t1 * color1[1] + t2 * color2[1] + t3 * color3[1])
-        b = int(t1 * color1[2] + t2 * color2[2] + t3 * color3[2])
-
-        # Garante que os valores RGB estejam no intervalo correto (0-255)
-        r = max(0, min(r, 255))
-        g = max(0, min(g, 255))
-        b = max(0, min(b, 255))
-
-        # Retorna a cor como uma tupla (r, g, b)
-        return r, g, b
-
-
-    def rgb_to_hex(rgb):
-        # Converte a cor RGB para o formato #RRGGBB
-        return f'#{rgb[0]:02X}{rgb[1]:02X}{rgb[2]:02X}'
+    # Calcula o tempo de execução
+    start_time = time.time()
     
-    # Esta função preenche um polígono triangular com uma cor no canvas fornecido.
-    # Ela recebe uma lista de vértices do polígono e o canvas onde o polígono será desenhado.
-
-    # Verifica se os 3 vértices estão na lista, se não, exibe uma mensagem de erro e interrompe o preenchimento.
+    # Verifica se os 3 vértices estão na lista, se não, exibe uma mensagem de 
+    # erro e interrompe o preenchimento.
     if len(vertices) != 3:
         tk.messagebox.showerror("Erro", "Deve-se colorir todos os vértices do triângulo para executar o preenchimento")
         return
+    
+    # Passa uma camada branca no trinângulo
+    canvas.create_polygon(*vertices[0][0], *vertices[1][0], *vertices[2][0], fill='white', outline='white')
+    
+    # Cham ao método rasterize_triangle para preencher o triângulo
+    rasterize_triangle(vertices[0][0], vertices[1][0], vertices[2][0], vertices[0][1], vertices[1][1], vertices[2][1], canvas)
 
-    # Encontra a coordenada y mínima e máxima dos vértices do triângulo.
-    min_y = min(vertices, key=lambda p: p[0][1])[0][1]
-    max_y = max(vertices, key=lambda p: p[0][1])[0][1]
+    # Atualiza a tela
+    canvas.update()
+    
+    # Calcula o tempo de execução
+    print("Tempo de execução (FillPoly):", time.time() - start_time)
 
-    # ! Neste trecho de código, esta sendo percorrido cada linha vertical de um triângulo 
-    # ! e verificando as interseções entre essa linha e as arestas do triângulo.
-    for y in range(min_y, max_y + 1):
-        
-        # Lista de interseções entre a linha vertical e as arestas do triângulo.
-        intersections = []
 
-        # ? Percorre cada uma das três arestas do triângulo. Dentro desse loop, obtemos as 
-        # ? coordenadas x e y dos pontos inicial e final da aresta.
-        for i in range(3):
-            x1, y1 = vertices[i][0]
-            x2, y2 = vertices[(i + 1) % 3][0]
+def rasterize_triangle(v1, v2, v3, c1, c2, c3, canvas):
+    
+    # Verifica se o triângulo é degenerado
+    if v1[1] == v2[1] == v3[1] or v1[0] == v2[0] == v3[0]:
+        print("Triângulo degenerado")
+        return
+    
+    # Ordena os vértices por coordenada y, o menor y primeiro, o maior y por último
+    # usando a função sorted com a chave lambda
+    vertices = sorted([(v1, c1), (v2, c2), (v3, c3)], key=lambda v: v[0][1])
+    
+    # Separa os vértices e as cores respectivamente
+    v1, c1 = vertices[0]
+    v2, c2 = vertices[1]
+    v3, c3 = vertices[2]
+    
+    # Calcula as taxas de variação das cores
+    dc12 = [((1 / (v2[1] - v1[1])) * (c2[i] - c1[i])) for i in range(3)]
+    dc13 = [((1 / (v3[1] - v1[1])) * (c3[i] - c1[i])) for i in range(3)]
+    dc23 = [((1 / (v3[1] - v2[1])) * (c3[i] - c2[i])) for i in range(3)]
+    
+    # Inicializa as cores nos vértices
+    c12_r, c12_g, c12_b = c1
+    c13_r, c13_g, c13_b = c1
+    c23_r, c23_g, c23_b = c2
 
-            # ! Verifica-se se a linha vertical cruza a aresta do triângulo. Para fazer isso, compara-se
-            # ! as coordenadas y dos pontos inicial e final da aresta com a coordenada y da linha vertical
-            # * Adiciona-se uma pequena tolerância de 1e-6 para lidar com possíveis erros de arredondamento
-            # * evitando erros de ser igual a 0 e não ser considerado como interseção.
-            if y1 <= y + 1e-6 <= y2 or y2 <= y + 1e-6 <= y1:
-                if y2 - y1 != 0:
-                    
-                    # Calcula a coordenada x da interseção usando interpolação linear.
-                    x = int(x1 + (y + 1e-6 - y1) * (x2 - x1) / (y2 - y1))
-                    intersections.append(x)
+    # Passa uma camada branca no trinângulo
+    canvas.create_polygon(*vertices[0][0], *vertices[1][0], *vertices[2][0], fill='white', outline='white')
+    
+    # Rasteriza o triângulo linha por linha
+    for y in range(v1[1], v3[1] + 1):
 
-        # Ordena as interseções em ordem crescente.
-        intersections.sort()
-        
-        # ? O resultado final será uma lista de coordenadas x das interseções entre a linha vertical e as 
-        # ? arestas do triângulo, ordenadas em ordem crescente.
-
-        # ! Preenche a linha horizontal entre cada par de interseções
-        # ! A cada iteração, pega-se dois valores de interseção consecutivos, x1 e x2. 
-        # ! Se não houver um próximo valor de interseção, pega-se o primeiro valor novamente.
-        for i in range(0, len(intersections), 2):
+        # Rasteriza a parte superior do triângulo, até a sua metade, no caso
+        # até o vertice 2
+        if y < v2[1]:
+    
+            draw_scanline(v1, v2, [c12_r, c12_g, c12_b], v1, v3, [c13_r, c13_g, c13_b], y, canvas)
+            c12_r += dc12[0]    # Incrementa a cor vermelha (1->2)
+            c12_g += dc12[1]    # Incrementa a cor verde    (1->2)
+            c12_b += dc12[2]    # Incrementa a cor azul     (1->2)
             
-            x1 = intersections[i]
-            x2 = intersections[i + 1] if i + 1 < len(intersections) else intersections[0]
+        # Rasteriza a parte inferior do triângulo, a partir da metade, no caso
+        # abaixo do vertice 2
+        else:
 
-            # ! Itera sobre os valores de x na faixa de x1 a x2. Isso significa que estamos percorrendo 
-            # ! cada pixel na linha horizontal entre as interseções.
-            for x in range(x1, x2 + 1):
-                
-                # ! Calcula os pesos de interpolação para cada vértice do triângulo.
-                
-                # * A variável d é inicializada como uma lista vazia. Ela será usada para armazenar 
-                # * as distâncias entre cada vértice do triângulo e um ponto de referência (x, y).
-                
-                # * É feito um loop através dos vértices do triângulo. Cada vértice é uma tupla ((vx, vy), _), 
-                # * onde (vx, vy) representa as coordenadas do vértice e _ é um valor não utilizado.
-                
-                # ? É calculada a distância entre o vértice atual e o ponto de referência (x, y) usando a fórmula da distância euclidiana: 
-                # ? ((vx - x) ** 2 + (vy - y) ** 2) ** 0.5. Essa fórmula calcula a distância entre dois pontos em um plano cartesiano.
-                d = [((vx - x) ** 2 + (vy - y) ** 2) ** 0.5 for ((vx, vy), _) in vertices]
-                
-                # ? Total é inicializada como a soma dos inversos dos quadrados de cada distância em d. 
-                # * O valor 1e-6 é adicionado ao denominador para evitar divisão por zero
-                total = sum(1 / ((di + 1e-6) ** 2) for di in d)
-                
-                # ? É feito outro loop através das distâncias em d. Para cada distância di, é calculado o peso de interpolação correspondente 
-                # ? usando a fórmula 1 / ((di + 1e-6) ** 2). O valor 1e-6 é adicionado ao denominador novamente para evitar divisão por zero.
-                # * Aqui é garantido que as cores dos vértices sejam interpoladas de acordo com a distância entre o vértice e o ponto de referência (x, y)
-                # * fazendo o efeito de gradiente necessário para o preenchimento, isso garante tambem que o inicio perto dos vertices seja mais forte por causa
-                # * do peso de interpolação ser maior e conforme vai se afastando o peso vai diminuindo e a cor vai ficando mais fraca
-                t = [(1 / ((di + 1e-6) ** 2)) / total for di in d]
+            draw_scanline(v2, v3, [c23_r, c23_g, c23_b], v1, v3, [c13_r, c13_g, c13_b], y, canvas)
+            c23_r += dc23[0]    # Incrementa a cor vermelha (2->3)
+            c23_g += dc23[1]    # Incrementa a cor verde    (2->3)
+            c23_b += dc23[2]    # Incrementa a cor azul     (2->3)
+            
+        c13_r += dc13[0]        # Incrementa a cor vermelha (1->3)
+        c13_g += dc13[1]        # Incrementa a cor verde    (1->3)
+        c13_b += dc13[2]        # Incrementa a cor azul     (1->3)
+        
+    return
 
-                # ! Essa função recebe três cores (representadas como tuplas RGB), juntamente com três pesos de interpolação (t1, t2, t3).
-                # ! Ela realiza a interpolação das componentes RGB das cores de acordo com os pesos fornecidos
-                
-                # ? Para cada componente (vermelho, verde e azul), a função calcula o valor interpolado multiplicando cada componente da cor pelo peso correspondente 
-                # ? e somando os resultados. (r = int(t1 * color1[0] + t2 * color2[0] + t3 * color3[0]))
-                color = interpolate_color(vertices[0][1], vertices[1][1], vertices[2][1], t[0], t[1], t[2])
+def draw_scanline(v1, v2, c1, v3, v4, c2, y, canvas):
+    
+    # Calcula as coordenadas x nas duas arestas do triângulo
+    x1 = v1[0] + (v2[0] - v1[0]) * (y - v1[1]) / (v2[1] - v1[1]) if v2[1] != v1[1] else v1[0]
+    x2 = v3[0] + (v4[0] - v3[0]) * (y - v3[1]) / (v4[1] - v3[1]) if v4[1] != v3[1] else v3[0]
 
-                # Converte a cor RGB para o formato hexadecimal apenas para exibição no canvas
-                color_hex = rgb_to_hex(color)
+    # Garante que x1 é a coordenada x mais à esquerda e x2 é a coordenada x mais à direita
+    # sem isso, a linha não é desenhada corretamente ou até mesmo não é desenhada
+    if x1 > x2:
+        x1, x2 = x2, x1     # Troca os valores de x1 e x2
+        c1, c2 = c2, c1     # Troca as cores de c1 e c2
 
-                # Desenha o pixel na tela usando a cor calculada.
-                canvas.create_line(x, y, x + 1, y, fill=color_hex)
+    # Calcula a taxa de variação da cor
+    dc_r = (c2[0] - c1[0]) / (x2 - x1) if x2 != x1 else 0   # Taxa de variação da cor vermelha
+    dc_g = (c2[1] - c1[1]) / (x2 - x1) if x2 != x1 else 0   # Taxa de variação da cor verde
+    dc_b = (c2[2] - c1[2]) / (x2 - x1) if x2 != x1 else 0   # Taxa de variação da cor azul
+    
+    # Inicializa a cor no pixel mais à esquerda
+    c_r, c_g, c_b = c1
+
+    # Desenha a linha de varredura pixel por pixel
+    # percorrendo a linha de varredura de x1 até x2
+    for x in range(int(x1), int(x2)):       
+        set_pixel_color(x, y, [c_r, c_g, c_b], canvas)  # Define a cor do pixel
+        c_r += dc_r    # Incrementa a cor vermelha
+        c_g += dc_g    # Incrementa a cor verde
+        c_b += dc_b    # Incrementa a cor azul
+
+def set_pixel_color(x, y, color, canvas):
+    # Converte a lista de cor para uma string no formato '#RRGGBB'
+    color = '#%02x%02x%02x' % (int(color[0]), int(color[1]), int(color[2]))
+
+    # Desenha um pixel na posição (x, y) com a cor especificada
+    canvas.create_line(x, y, x+1, y, fill=color)
