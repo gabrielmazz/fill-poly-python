@@ -1,153 +1,137 @@
-# <p align="center">Algoritmo de Fill Poly</p>
-#### <p align="center">Trabalho de Computação Gráfica, faculdade de Ciência da Computação, UNIOESTE (Universidade Estadual do Oeste do Paraná)</p>
+# <p align="center">Algoritmo do Caixeiro Viajante com Busca Tabu</p>
+#### <p align="center">Trabalho de Otimização Combinatória, faculdade de Ciência da Computação, UNIOESTE (Universidade Estadual do Oeste do Paraná)</p>
 ##### <p align="center">Desenvolvido por: [Gabriel Mazzuco](https://github.com/gabrielmazz)
 
 ---
 
-## Indice
+# <p align="center">Introdução</p>
 
-- [Descrição do Projeto](#descrição-do-projeto)
-- [Pré-requisitos](#pré-requisitos)
-    - [Requisitos para o projeto](#requisitos-para-o-projeto)
-    - [Requisitos mínimos de hardware](#requisitos-mínimos-de-hardware)
-- [Como usar](#como-usar)
-    - [Fill Poly](#fill-poly)
-    - [Carregando dados de um arquivo](#carregando-dados-de-um-arquivo)
-        - [Formato do arquivo](#formato-do-arquivo)
-- [Referências](#referências)
+O Problema do Caixeiro Viajante (PCV) é um problema clássico de otimização combinatória que consiste em encontrar o menor caminho que passa por todos os vértices de um grafo, visitando cada vértice uma única vez e retornando ao vértice de origem. O PCV é um problema NP-difícil, o que significa que não se conhece um algoritmo polinomial que resolva o problema de forma exata em tempo polinomial. Por isso, a maioria dos algoritmos para resolver o PCV são heurísticas, que buscam encontrar uma solução aproximada em tempo polinomial.
 
-## Descrição do Projeto
+Uma das heurísticas mais conhecidas para resolver o PCV é a Busca Tabu. A Busca Tabu é uma técnica de busca local que utiliza uma lista tabu para evitar que o algoritmo fique preso em ótimos locais locais. A Busca Tabu é uma técnica muito eficiente para resolver problemas de otimização combinatória, como o PCV.
 
-<p align="justify">O algoritmo de Fill Poly é um algoritmo de preenchimento de polígonos, que consiste em preencher um polígono com uma cor sólida, a partir de um ponto inicial. O algoritmo é baseado no algoritmo de Scanline, que consiste em preencher uma linha horizontal, a partir de um ponto inicial, até um ponto final. </p>
 
-<p align="justify"> O código usa como base um poligono definido pelo usuário, esse poligono usa seus vértices para definir aonde começa e termina o preenchimento. Definido pelo usuário também as cores que serão usadas para o preenchimento, assim realizando uma interpolação, causando o efeito degradê. </p>
+# <p align="center">Formato de entrada</p>
 
-<p align="center"> <img src="img/img_triangulo_teste.png" width="800" height="400" style="border-radius: 12px; box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);"> </p>
+O formato de cada arquivo de entrada é baseado na Figura 1, na ilustração, cada linha representa o cuso de cada aresta a partir do vértice de origem até o destino. Por exemplo, na primeira linha temos o valor 6. Ele indica que o custo para ir do vértice 1 até o quinto vértice é igual a seis. Alem de que na primeira linha do arquivo, representa o número de vértices do grafo. A representação de como o grafo fica com a entrada da Figura 1, está sendo representada na Figura 2
 
-## Pré-requisitos
-
-### Requisitos para o projeto
-
-Antes de começar, você vai precisar ter instalado em sua máquina as seguintes ferramentas:
-
-- [Python](https://www.python.org/downloads/), versão 3.8.5 ou superior
-    - `sudo apt-get install python3.8`
-
-- [Tkinter](https://docs.python.org/3/library/tkinter.html), versão 8.6 ou superior
-    - `sudo apt-get install python3-tk`
-    - Usado no código para a criação da interface gráfica e todas as suas funcionalidades
-
-- [Pillow](https://pillow.readthedocs.io/en/stable/), versão 8.0.1 ou superior
-    - `pip install pillow`
-    - Usado no código para manipulação de imagens e a possibilidade de tirar prints da tela do tkinter
-
-- [Rich](), versão 9.2.0 ou superior
-    - `pip install rich`
-    - Usado no código para criação de tabelas e logs mais organizados sobre a demonstração do log do algoritmo
-
-### Requisitos mínimos de hardware
-
-- Sistema operacional: Linux (Ubuntu 20.04.2 LTS)
-- Processador: dual-core 1.6GHz ou superior
-- Memória RAM: 2GB ou superior
-- Espaço em disco: 1GB ou superior
-
-## Como usar
-
-<p> Para usar o algoritmo, basta executar o arquivo `main.py` com o comando, dentro da pasta do projeto: </p>
-
-```bash
-python3 main.py
-```
-
-<p align="justify"> Após isso, uma janela irá abrir, com a interface gráfica do algoritmo. 
+<br>
 
 <p align="center">
-    <img src="img/tela_inicial.png" width="" height=""
-    style="box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);">
-
-<p align="justify"> Para começar, basta clicar com o botão esquerdo do mouse, nos pontos que deseja criar o primeiro polígono, tendo a possibilidade de criar quantos polígonos quiser apenas clicando no menu <em>Editar</em> e clicando em <em>Novo Polígono</em>. Dentro deste menu, também é possível editar os polígonos já criados, excluindo-os ou limpar completamente a tela. </p>
-
-<p align="center">
-    <img src="img/menu_editar.png" width="" height="" 
+    <img src="img/img1.png" width="40%" height="" 
     style="box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);">
 </p>
 
-<p align="justify"> Após criar os polígono, é possivel escolher várias opções de edição para o poligo <em>Pintar arestas</em>, <em>Pintar vertices</em>, <em>Pintar poligono</em>, tudo isso sendo possivel apenas se escolher a cor do objeto no mesmo menu, isso irá abrir uma palheta de cores do próprio tkinter, onde é possivel escolher a cor desejada. </p>
+<br>
 
 <p align="center">
-    <img src="img/menu_pintar.png" width="" height="" 
+    <img src="img/img2.png" width="70%" height="" 
     style="box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);">
+</p>
+
+
+# <p align="center">Implementação do Algoritmo</p>
+
+A implementação do algoritmo foi feita em Python, e o código fonte está disponível no repositório do GitHub. O algoritmo foi implementado utilizando a biblioteca *networkX* para representar o grafo, a biblioteca *heapq* para implementar facilitar a implementação da fila de prioridade, além que para input e prints, a biblioteca *rich* é utilizada
+
+A implementação do Caixeiro viajante é um algoritmo bem caro de ser executado, portanto fica inviável a sua utilização em grandes grafos, tanto que passando de 150 vertices, o algoritmo demora muito para encontrar uma solução e ainda existe a chance dos recursos computacionais acabarem e o Python "matar" o processo por falta de memória e além de ter muitas chamadas.
+
+
+## <p align="center">Definição da parâmetros</p>
+
+
+O usuário pode definir, qual arquivo será lido e utilizado no algoritmo, com base nas entradas que estão disponiveis na pasta, terá um menu para que ela possa selecionar
+
+Para a utilização do algoritmo da busca tabu, o usuário define os parâmetros do tamanho da lista tabu que será utilizada e também quantas iterações serão feitas. Estas duas entradas devem ser feitas pelo usuário, e a partir delas o algoritmo irá rodar e retornar o menor caminho encontrado.
+
+## <p align="center">Leitura do Arquivo</p>
+
+Os arquivos de entrada já estão predefindos dentro da pasta **Entradas**, tendo grafos de tamanho de 10 até 1500 vertices, todos com seus respectivos pesos. A leitura do arquivo lê todas as linhas, recebendo o número de vertices, assim sendo possivel criar e adicionar os nodes ao grafo, utilizando a biblioteca *networkx*
 
 <p align="center">
-    <img src="img/escolha_cor.png" width="" height="" 
+    <img src="img/img3.png" width="80%" height="" 
     style="box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);">
-
-<p align="justify"> Para usar as opções nos poligonos, é atribuido o botão direito para realizar todas as ações esperadas. </p>
-
-<p align="justify"> Existe também o menu de <em>Debug</em> aonde é possivel ver o log do algoritmo, aonde é mostrado como está a disposição das listas que o programa utiliza na sua execução, dentre as suas informações, é possivel ver quais são os polígonos que estão sendo preenchidos, quais são as arestas que estão sendo pintadas, quais são os vértices que estão sendo pintados, quais são os polígonos que estão sendo apenas pintados, e quais são os vértices globais que estão sendo criados no formato de tabelas, usadas pela biblioteca <em>Rich</em>, tudo sendo mostrada no terminal.</p>
+</p>
 
 <p align="center">
-    <img src="img/vertices_globais_tabelas.png" width="" height="" 
+    <img src="img/img4.png" width="80%" height="" 
     style="box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);">
+</p>
 
 
-### Fill Poly
+# <p align="center">Implementação da Busca Tabu</p>
 
-<p align="justify"> Para realizar o uso do algoritmo de Fill Poly que é o intuito do projeto, basta clicar no menu <em>Pintar</em> e clicar em <em>Fill Poly</em> também com o botão direito do mouse, depois de ter escolhido um cor para cada vértice do polígono. </p>
+
+## <p align="center">Solução inicial do Caixeiro Viajante</p>
+
+
+Para a solução inicial do caixeiro viajante, foi utilizado o algoritmo de Hamilton, onde ele percorre todos os vertices do grafo, e retorna um caminho possível, dentro do escopo do problema. O código do caminho hamiltoniano foi feito com base no vertice 1 como ponto de partida e caminhando por todo o grafo, voltando nele, mas nessa implementação, ele só consegue retornar o caminho, quando encontra o vertice inicial, sendo uma função recursiva, continuando a sua busca.
+
+<br>
 
 <p align="center">
-    <img src="img/fill_poly.png" width="" height="" 
+    <img src="img/img5.png" width="80%" height="" 
     style="box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);">
+</p>
 
-<p align="justify"> É possivel ver de forma visual quais cores foram escolhidas para cada vértice pois ele estará pintado com a cor escolhida. </p>
+## <p align="center">Percurso da Busca Tabu</p>
+
+O algoritmo da busca tabu funciona com base nas suas iterações, assim gerando uma lista de vizinhos possiveis com base na solução inicial, no caso sendo destinado para o TSP, trocando 1 cidade com a outra, criando uma lista de vizinhos possiveis e impossiveis, sendo sorteado um vertice que será trocado, a implementação pode ser vista na Figura 06
 
 <p align="center">
-    <img src="img/vertices_pintados.png" width="" height="" 
+    <img src="img/img7.png" width="80%" height="" 
     style="box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);">
+</p>
 
-<p align="justify"> Caso os três vértices do polígono não tenham sido pintados, o algoritmo irá retornar uma mensagem de erro, informando que não é possivel realizar o preenchimento do polígono. Portanto, é necessário pintar os três vértices do polígono para que o algoritmo funcione corretamente. </p>
+Na geração de vizinhos, é verificado se as gerações são possiveis, seria a verificação se o caminho é possivel até o final, percorrendo toda a lista e criando uma nova apenas dos que conseguem chegar no final. A implementação pode ser vista na Figura 07
 
 <p align="center">
-    <img src="img/mensagem_erro.png" width="" height="" 
+    <img src="img/img8.png" width="80%" height="" 
     style="box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);">
+</p>
 
-<p align="justify"> Interessante ressaltar que o algoritmo é bem lerdo e não é possivel atualizar a tela a todo momento, por exemplo quando editamos os vértices de um polígono, ele não atualiza o fill poly iterativamente, portanto devemos clicar no menu <em>Refresh</em> e clicar em <em>Refresh Fill Poly    </em> para atualizar os poligonos que estão preenchidos mas agora nas suas novas posições.</p>
-
-### Carregando dados de um arquivo
-
-<p align="justify"> Para carregar os dados de um arquivo, basta clicar no menu <em>Arquivo</em> e clicar em <em>Carregar dados</em>, isso irá abrir uma janela para escolher o arquivo que deseja carregar. </p>
-
-<p align="justify"> Primeiramente deve ter sido salvo previamente um arquivo com os dados de um polígono, para isso basta clicar no menu <em>Arquivo</em> e clicar em <em>Salvar dados</em>, isso irá abrir uma janela para escolher o local e o nome do arquivo que deseja salvar, tudo que está na tela será salvo no arquivo. </p>
+Com todos os vizinhos gerado e válidados, a hora agora é realizar a busca tabu, no caso ele passa por todos os vizinhos válidos selecionando-os, calculando o seu custo e verificando se ele está na lista tabu e também verificando se o custo do vizinho é melhor que o melhor custo encontrado até o momento. Inclusive, dentro deste laço é realizado o append na lista tabu, além da sua manipulação, no caso retirando o primeiro elemento da lista sendo o item mais velho já registrado. A implementação pode ser vista na Figura 08.
 
 <p align="center">
-    <img src="img/dados_salvos.png" width="" height="" 
+    <img src="img/img6.png" width="80%" height="" 
     style="box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);">
+</p>
 
-#### Formato do arquivo
 
-<p align="justify"> O arquivo é salvo no formato <em>.tk</em> com o nome indicado pelo próprio usuário, sendo com o seguinte formato: </p>
+# <p align="center">Como o algoritmo mostra seus resultados</p>
 
-```
-vertices_globais = [(x1, y1), (x2, y2), (x3, y3)]
-lista_poligonos_preenchidos = [Px, [[(V1, V2), (R, G, B)], [(V2, V3), (R, G, B)], [(V3, V1), (R, G, B)]]]
-lista_arestas_pintadas = [[(x1, y1), (x2, y2)], (R, G, B), (a1, a2), Px]
-lista_vertices_pintados = [(x1, y1), (R, G, B), Px, Vx]
-lista_poligonos_apenas_pintados = [Px, (R, G, B)]
-```
+O algoritmo mostra os resultados de forma bem simples, contendo as informaçõs de qual arquivo foi escolhido, o tamano da lista tabu e quantas iterações foram executadas. Conta o tempo de execução do código e si e também quanto tempo que demorou para achar uma solução inicial viavel. Mostra o caminho inicial, o último caminho encontrado, o melhor caminho e também o pior caminho encontrado, todos com os seus respectivos custos.
 
-<p align="justify"> Onde: </p>
+<p align="center">
+    <img src="img/img9.png" width="80%" height="" 
+    style="box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);">
+</p>
 
-- `vertices_globais`: é uma lista com todos os vértices que foram criados na tela, sendo que cada vértice é uma tupla com as coordenadas x e y do vértice
-- `lista_poligonos_preenchidos`: é uma lista com todos os polígonos que foram preenchidos com o algoritmo de *fill poly*, sendo que cada polígono dentro da lista é dado pelo seu número *Px*, coordenadas do vértice *V1*, *V2* e *V3* que formam o polígono, e a cor *R*, *G* e *B* que foi escolhida para o polígono
-- `lista_arestas_pintadas`: é uma lista com todas as arestas que foram pintadas, sendo que cada aresta dentro da lista é dada pelas coordenadas *x1*, *y1*, *x2* e *y2* que formam a aresta, e a cor *R*, *G* e *B* que foi escolhida para a aresta
-- `lista_vertices_pintados`: é uma lista com todos os vértices que foram pintados, sendo que cada vértice dentro da lista é dado pelas coordenadas *x* e *y* do vértice, e a cor *R*, *G* e *B* que foi escolhida para o vértice, além do número *Px* que indica qual polígono o vértice pertence e o número *Vx* que indica qual vértice do polígono o vértice é
-- `lista_poligonos_apenas_pintados`: é uma lista com todos os polígonos que foram apenas pintados com cores simples, sem usar o algoritmo de fill poly, sendo que cada polígono dentro da lista é dado pelo seu número *Px*, e a cor *R*, *G* e *B* que foi escolhida para o polígono
+# <p align="center">Requisitos mínimos de hardware</p>
 
-## Referências
 
-- [INE 5420 - Computação Gráfica - Aula 11.1.Rasterização](https://www.youtube.com/watch?v=huw7fJcSwQY)
-- [Scan Line Polygon Fill Algorithm | Example Of Scan Line Polygon Fill Algorithm | Computer Graphics](https://www.youtube.com/watch?v=7QYn2FyIf7A)
-- [OpenAI. (2023). GPT-3.5: Modelo de Linguagem Pré-Treinado](https://openai.com/blog/chatgpt)
-- [BingAi. (2023). GPT-4.0: Modelo de Linguagem Pré-Treinado](https://www.bing.com/)
-- [OpenAI e GitHub. (Ano). GitHub Copilot: Ferramenta de Autocompletar de Código](https://copilot.github.com/)
+- Processador: Intel Core i3 ou superior
+- Memória RAM: 8GB sendo recomendado 16GB mas para uma execução razoável 32GB é o ideal
+- Espaço em disco: 1GB
+- Sistema Operacional: Windows 10 | 11 ou Linux
+
+# <p align="center">Requisitos mínimos de software</p>
+
+- Python 3.8 ou superior
+- Bibliotecas: networkx, heapq, rich, para instalar as bibliotecas, basta executar o comando abaixo:
+    - `pip install networkx`
+    - `pip install heapq`
+    - `pip install rich`
+
+# <p align="center">Como usar</p>
+
+Para executar o algoritmo, basta executar o arquivo `main.py` e seguir as instruções que aparecerão no terminal. O algoritmo irá pedir o arquivo de entrada, o tamanho da lista tabu e o número de iterações. Após isso, o algoritmo irá rodar e mostrar os resultados.
+
+# <p align="center">Referências</p>
+
+- [Documentação do NetworkX](https://networkx.org/)
+- [Documentação do Heapq](https://docs.python.org/3/library/heapq.html)
+- [Documentação do Rich](https://rich.readthedocs.io/en/latest/)
+- [Busca Tabu](https://pt.wikipedia.org/wiki/Busca_tabu)
+- [Problema do Caixeiro Viajante](https://pt.wikipedia.org/wiki/Problema_do_caixeiro-viajante)
+
