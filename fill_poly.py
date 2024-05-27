@@ -41,39 +41,57 @@ def rasterize_triangle(v1, v2, v3, c1, c2, c3, canvas):
     v2, c2 = vertices[1]
     v3, c3 = vertices[2]
     
-    # Calcula as taxas de variação das cores
-    dc12 = [((1 / (v2[1] - v1[1])) * (c2[i] - c1[i])) for i in range(3)]
-    dc13 = [((1 / (v3[1] - v1[1])) * (c3[i] - c1[i])) for i in range(3)]
-    dc23 = [((1 / (v3[1] - v2[1])) * (c3[i] - c2[i])) for i in range(3)]
+    print("V1:", v1, "C1:", c1)
     
+    # Calcula as taxas de variação das cores -> em relaçao a x
+    dc12 = [((c2[i] - c1[i]) / (v2[1] - v1[1])) for i in range(3)]
+    dc13 = [((c3[i] - c1[i]) / (v3[1] - v1[1])) for i in range(3)]
+    dc23 = [((c3[i] - c2[i]) / (v3[1] - v2[1])) for i in range(3)]
+    
+    #x - y
+    dx12 = ((v2[0] - v1[0]) / (v2[1] - v1[1]))
+    dx13 = ((v3[0] - v1[0]) / (v3[1] - v1[1]))
+    dx23 = ((v3[0] - v2[0]) / (v3[1] - v2[1]))
+
     # Inicializa as cores nos vértices
     c12_r, c12_g, c12_b = c1
     c13_r, c13_g, c13_b = c1
     c23_r, c23_g, c23_b = c2
 
+    c12_x = v1[0]
+    c13_x = v1[0]
+    c23_x = v2[0]
+
     # Passa uma camada branca no trinângulo
     canvas.create_polygon(*vertices[0][0], *vertices[1][0], *vertices[2][0], fill='white', outline='white')
     
     # Rasteriza o triângulo linha por linha
-    for y in range(v1[1], v3[1] + 1):
+    for y in range(v1[1], v3[1] - 1):
 
         # Rasteriza a parte superior do triângulo, até a sua metade, no caso
         # até o vertice 2
         if y < v2[1]:
     
-            draw_scanline(v1, v2, [c12_r, c12_g, c12_b], v1, v3, [c13_r, c13_g, c13_b], y, canvas)
+            draw_scanline(c12_x, c13_x, [c12_r, c12_g, c12_b], [c13_r, c13_g, c13_b], y, canvas)
+            
             c12_r += dc12[0]    # Incrementa a cor vermelha (1->2)
             c12_g += dc12[1]    # Incrementa a cor verde    (1->2)
             c12_b += dc12[2]    # Incrementa a cor azul     (1->2)
+            
+            c12_x += dx12
+            c13_x += dx13
             
         # Rasteriza a parte inferior do triângulo, a partir da metade, no caso
         # abaixo do vertice 2
         else:
 
-            draw_scanline(v2, v3, [c23_r, c23_g, c23_b], v1, v3, [c13_r, c13_g, c13_b], y, canvas)
+            draw_scanline(c23_x, c13_x, [c23_r, c23_g, c23_b], [c13_r, c13_g, c13_b], y, canvas)
             c23_r += dc23[0]    # Incrementa a cor vermelha (2->3)
             c23_g += dc23[1]    # Incrementa a cor verde    (2->3)
             c23_b += dc23[2]    # Incrementa a cor azul     (2->3)
+            
+            c23_x += dx23
+            c13_x += dx13
             
         c13_r += dc13[0]        # Incrementa a cor vermelha (1->3)
         c13_g += dc13[1]        # Incrementa a cor verde    (1->3)
@@ -81,12 +99,8 @@ def rasterize_triangle(v1, v2, v3, c1, c2, c3, canvas):
         
     return
 
-def draw_scanline(v1, v2, c1, v3, v4, c2, y, canvas):
+def draw_scanline(x1, x2, c1, c2, y, canvas):
     
-    # Calcula as coordenadas x nas duas arestas do triângulo
-    x1 = v1[0] + (v2[0] - v1[0]) * (y - v1[1]) / (v2[1] - v1[1]) if v2[1] != v1[1] else v1[0]
-    x2 = v3[0] + (v4[0] - v3[0]) * (y - v3[1]) / (v4[1] - v3[1]) if v4[1] != v3[1] else v3[0]
-
     # Garante que x1 é a coordenada x mais à esquerda e x2 é a coordenada x mais à direita
     # sem isso, a linha não é desenhada corretamente ou até mesmo não é desenhada
     if x1 > x2:
